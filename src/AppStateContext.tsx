@@ -2,6 +2,8 @@ import { type } from "os";
 import React, { createContext, useReducer, useContext, Dispatch } from "react";
 import { v4 as uuid } from "uuid";
 import { findItemIndexById } from "./utils/findItemIndexById";
+import { moveItem } from "./moveItem";
+import { DragItem } from "./DragItem";
 
 interface Task {
   id: string;
@@ -78,7 +80,11 @@ type Action =
         dragIndex: number;
         hoverIndex: number;
       };
-    };
+    }
+   | {
+        type: "SET_DRAGGED_ITEM";
+        payload: DragItem | undefined;
+    }
 
 const appStateReducer = (state: AppState, action: Action): AppState => {
   switch (action.type) {
@@ -109,6 +115,9 @@ const appStateReducer = (state: AppState, action: Action): AppState => {
       state.lists = moveItem(state.lists, dragIndex, hoverIndex);
       return { ...state };
     }
+    case "SET_DRAGGED_ITEM": {
+        return { ...state, draggedItem: action.payload }
+        }
     default: {
       return state;
     }
